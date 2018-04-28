@@ -12,36 +12,44 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        share()
     }
 }
-
+//MARK: - 点击事件
 extension ViewController {
-    func share() {
-        var textToShare = "分享的标题。"
-        //分享的图片
-        var imageToShare = #imageLiteral(resourceName: "icon_tab1_select")
-        //分享的url
-//        var urlToShare = URL(string: "http://www.baidu.com")
-        //分享的视频
-        var urlToShareVideo = URL(fileURLWithPath: Bundle.main.path(forResource: "test", ofType: "mp4") ?? "")
-        //在这里呢 如果想分享图片 就把图片添加进去  文字什么的通上
-        var activityItems = [textToShare,imageToShare] as [Any]
-        var activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        //不出现在活动项目
-        activityVC.excludedActivityTypes = [.print, .copyToPasteboard, .assignToContact, .saveToCameraRoll]
-        present(activityVC, animated: true) {() -> Void in }
-        // 分享之后的回调
-        activityVC.completionWithItemsHandler = {(_ activityType: UIActivityType?, _ completed: Bool, _ returnedItems: [Any]?, _ activityError: Error?) -> Void in
-            if completed {
-                print("completed")
-                //分享 成功
-            } else {
-                print("cancled")
-                //分享 取消
-            }
+    @IBAction func shareTextImageAction(_ sender: Any) {
+        shareTextImage()
+    }
+    @IBAction func shareVideoAction(_ sender: Any) {
+        shareVideo()
+    }
+    @IBAction func shareCustomUIActivityAction(_ sender: Any) {
+        shareCustomUIActivity()
+    }
+}
+//MARK: - 分享
+extension ViewController {
+    ///分享自定义UIActivity
+    func shareCustomUIActivity() {
+        let toVC = UIActivityViewController(activityItems: ["分享的标题"], applicationActivities: [CustomUIActicity()])
+        present(toVC, animated: true, completion: nil)
+        toVC.completionWithItemsHandler = {(_ activityType: UIActivityType?, _ completed: Bool, _ returnedItems: [Any]?, _ activityError: Error?) -> Void in
+             print(completed ? "成功" : "失败")
         }
+    }
+    ///分享的文字，图片，链接
+    func shareTextImage() {
+        let textShare = "分享的标题。"
+        let imageShare = #imageLiteral(resourceName: "icon_tab1_select")
+        let urlShare = URL(string: "http://www.baidu.com")
+        let activityItems = [textShare,imageShare,urlShare] as [Any]
+        let toVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        present(toVC, animated: true, completion: nil)
+    }
+    ///分享的视频
+    func shareVideo() {
+        let videoUrl = URL(fileURLWithPath: Bundle.main.path(forResource: "test", ofType: "mp4") ?? "")
+        let toVC = UIActivityViewController(activityItems: [videoUrl] , applicationActivities: nil)
+        present(toVC, animated: true, completion: nil)
     }
 }
 
